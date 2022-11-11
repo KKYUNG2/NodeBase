@@ -1,7 +1,7 @@
-import loaders from '../engineLoader';
+import loaders from './engineLoader';
 
 if(!(process.argv[2])) {
-    console.log("Server cannot be started. Please check parameter.");
+    console.log("Set Your Process Environment");
     process.exit(0);
 }
 
