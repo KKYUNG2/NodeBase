@@ -1,11 +1,11 @@
 import express from 'express';
-import Config from "../config";
+import Config from "../../config";
 import session from 'express-session';
 import formData from 'express-form-data';
 import ejs from 'ejs';
 import cors from 'cors';
 import morgan from 'morgan';
-import router from "../src/routers";
+import router from "../routers";
 
 const app = express();
 const cookieParser = require('cookie-parser');
@@ -20,8 +20,8 @@ export default async () => {
     app.use(express.urlencoded({limit: '50mb'}));
     app.use(cookieParser());
 
-    app.get('', (req, res) => res.status(200).end());
-    app.head('', (req, res) => res.status(200).end());
+    app.get('/', (req, res) => res.status(200).end());
+    app.head('/', (req, res) => res.status(200).end());
 
     app.enable('trust proxy');
 

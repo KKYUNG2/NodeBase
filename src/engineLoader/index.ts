@@ -2,7 +2,7 @@
  * Created by 유희찬 on 2020-06-29.
  */
 
-import Config from "../config";
+import Config from "../../config";
 
 import ExpressLoader from './Express';
 

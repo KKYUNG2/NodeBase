@@ -1,9 +1,9 @@
 import express from "express";
-import MailController from "../../../controller/WAS/MailController";
+
+import mail from './mail';
 
 let router = express.Router();
 
-router.post("/device",  MailController.send);
-
+router.use('/', mail);
 
 export default router;
