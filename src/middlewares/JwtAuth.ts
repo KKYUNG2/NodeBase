@@ -1,0 +1,101 @@
+import {Request, Response, NextFunction} from "express";
+import jwt from "jsonwebtoken";
+import Config from "../../config";
+
+const moment = require('moment');
+
+export class JwtModel {
+
+    u: string;
+    t: string;
+
+    constructor(obj: JwtModel);
+    constructor(obj: any){
+        this.u = obj.u;
+        this.t = obj.t;
+    }
+
+    public getAll() {
+        return {u: this.u, t: this.t};
+    }
+
+    public deliverReqData(req: Request) {
+        req.body.userId = this.u;
+        req.body.time = this.t;
+        return;
+    }
+
+}
+
+export function createToken(input: JwtModel) {
+    return jwt.sign(input.getAll(), Config.JWT.SECRET, {
+        expiresIn: Config.JWT.EXPIRES_IN
+    });
+
+}
+
+export function validCheck(req: Request, res: Response, next: NextFunction) {
+
+    let token = <string>req.headers["authorization"];
+
+    if (!token)
+        return res.status(401).send({result: false, code: "401"});
+
+    if (token.indexOf("Bearer ", 0) < 0)
+        return res.status(401).send({result: false, code: "401"});
+
+    token = token.slice(7, token.length);
+    let jwtPayload;
+
+    try {
+        jwtPayload = new JwtModel(<JwtModel>jwt.verify(token, Config.JWT.SECRET));
+        res.locals.jwtPayload = jwtPayload;
+
+    } catch (err) {
+        return res.status(401).send({result: false, code: "401", err: 'JWT Auth Error'});
+
+    }
+
+    jwtPayload.deliverReqData(req);
+    let newToken = createToken(jwtPayload);
+    res.setHeader("token", newToken);
+
+    next();
+}
+
+export function createRefresh(input: JwtModel) {
+    return jwt.sign(input.getAll(), Config.JWT.SECRET + "240fgg480fhddko2epw", {
+        expiresIn: "7d"
+    });
+
+}
+
+export function validRefreshCheck(req: Request, res: Response, next: NextFunction) {
+
+    let token = <string>req.headers["authorization"];
+
+    if (!token)
+        return res.status(401).send({result: false, code: 401});
+
+    if (token.indexOf("Bearer ", 0) < 0)
+        return res.status(401).send({result: false, code: 401});
+
+    token = token.slice(7, token.length);
+    let jwtPayload;
+
+    try {
+        jwtPayload = new JwtModel(<JwtModel>jwt.verify(token, Config.JWT.SECRET + "240fgg480fhddko2epw"));
+        res.locals.jwtPayload = jwtPayload;
+
+    } catch (err) {
+        return  res.status(401).send({result: false, code: 401});
+
+    }
+
+    jwtPayload.deliverReqData(req);
+    let newToken = createToken(jwtPayload);
+    res.setHeader("token", newToken);
+
+    next();
+}
+
