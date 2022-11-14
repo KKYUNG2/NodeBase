@@ -1,8 +1,9 @@
 /**
- * Created by 유희찬 on 2020-08-05.
+ * Created By 강영규 On 2022-11-13
  */
+import UtilController from "../routers/controller/UtilController";
 
-class DataChecker {
+class DataChecker extends UtilController {
 
     public loadJWTValue(objData: any) {
         return {
@@ -12,28 +13,26 @@ class DataChecker {
         }
     }
 
-    public needCheck(objData: any, targetList: string[], notAllowValue: any[]) {
+    public needArrCheck(res: any, objData: any, needArr: string[], notAllowValue: any[]) {
 
         let retObj = {};
+        let dataFailList = [];
 
-        for (let item of targetList) {
+        for (let item of needArr) {
 
             if (objData[item] === undefined || objData[item] === "") {
-                return item;
-
-            }
-
-            for (let denyValue of notAllowValue) {
-                if (denyValue == objData[item]) {
-                    return item;
-
-                }
+                dataFailList.push(item)
             }
 
             // @ts-ignore
             retObj[item] = objData[item];
 
         }
+
+        if(dataFailList.length > 0){
+            return this.dataCheck(res, dataFailList);
+        }
+
 
         return retObj;
     }

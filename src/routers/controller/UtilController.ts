@@ -49,6 +49,20 @@ export default class UtilController {
 
     }
 
+    public dataCheck<T>(res: express.Response, data: string[]) {
+
+        let dto = {
+            result: false,
+            msg: 'Incorrect Data By ' + data
+        };
+
+
+        res.type('application/json');
+        return res.status(200).json(dto);
+
+    }
+
+
     public err<T>(res: express.Response, code: string, err: string) {
 
         let dto = {

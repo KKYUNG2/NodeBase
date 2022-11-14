@@ -32,6 +32,11 @@ class Config {
         EXPIRES_IN: string
     };
 
+    SMTP: {
+        user_email: string;
+        user_passwd: string;
+    }
+
     constructor() {
 
         // Global
@@ -44,6 +49,10 @@ class Config {
             EXPIRES_IN: process.env.JWT_EXPIRES_IN
         };
 
+        this.SMTP = {
+            user_email: process.env.USER_EMAIL,
+            user_passwd: process.env.USER_PASSWD
+        };
 
 
     }
