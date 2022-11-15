@@ -37,6 +37,16 @@ class Config {
         user_passwd: string;
     }
 
+
+    DB: {
+        host: string;
+        port: string;
+        user: string;
+        password: string;
+        database: string;
+        connectionLimit: string;
+    }
+
     constructor() {
 
         // Global
@@ -53,6 +63,17 @@ class Config {
             user_email: process.env.USER_EMAIL,
             user_passwd: process.env.USER_PASSWD
         };
+
+        this.DB = {
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            user: process.env.USER,
+            password: process.env.PASSWORD,
+            database: process.env.DATABASE,
+            connectionLimit: process.env.connectionLimit
+        }
+
+
 
 
     }

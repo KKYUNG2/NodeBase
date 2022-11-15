@@ -8,14 +8,16 @@ class MailController extends UtilController {
 
     public send = async (req: Request, res: Response) => {
         let data = DataChecker.mergeObject(
-            DataChecker.needArrCheck(res, req.body, ["targetMail"], [])
+            DataChecker.needArrCheck(res, req.body, ["targetMail", "title", "contents"], [])
         ) as {
-            targetMail: string
+            targetMail: string,
+            title: string,
+            contents: string
         };
 
-        let result = await MailService.send(res, data.targetMail);
+        let result = await MailService.send(res, data.targetMail, data.title, data.contents);
 
-        if(result)
+        if(result.response.substr(0,3) === '250')
             return this.true(res, 'MS0');
         else
             return this.false(res, 'MF0')

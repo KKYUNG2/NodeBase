@@ -30,7 +30,7 @@ class DataChecker extends UtilController {
         }
 
         if(dataFailList.length > 0){
-            return this.dataCheck(res, dataFailList);
+            return this.dataCheck(res, dataFailList, ' Is Essential Data');
         }
 
 

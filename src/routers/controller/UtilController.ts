@@ -49,11 +49,11 @@ export default class UtilController {
 
     }
 
-    public dataCheck<T>(res: express.Response, data: string[]) {
+    public dataCheck<T>(res: express.Response, data: string[], msg: string) {
 
         let dto = {
             result: false,
-            msg: 'Incorrect Data By ' + data
+            msg: data + msg
         };
 
 
