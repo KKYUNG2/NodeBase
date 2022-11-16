@@ -31,7 +31,49 @@ class MariaDB {
         }
     };
 
-    async CreateDB(statement: string) {
+    async query(statement: string) {
+        let conn = await this.getConnection();
+
+        try {
+            let result = await conn.query(statement.trim());
+
+            await conn.commit();
+            await conn.release();
+
+            return {
+                affectedRows: result.affectedRows
+            };
+
+        } catch (err) {
+            await conn.release();
+            return null;
+
+        }
+
+    }
+
+    async getOne(statement: string) {
+        let conn = await this.getConnection();
+
+        try {
+            let result = await conn.query(statement.trim());
+
+            await conn.commit();
+            await conn.release();
+
+            return {
+                affectedRows: result.affectedRows
+            };
+
+        } catch (err) {
+            await conn.release();
+            return null;
+
+        }
+
+    }
+
+    async get(statement: string) {
         let conn = await this.getConnection();
 
         try {

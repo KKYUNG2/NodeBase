@@ -13,7 +13,7 @@ class DataChecker extends UtilController {
         }
     }
 
-    public needArrCheck(res: any, objData: any, needArr: string[], notAllowValue: any[]) {
+    public needArrCheck(res: any, objData: any, needArr: string[]) {
 
         let retObj = {};
         let dataFailList = [];

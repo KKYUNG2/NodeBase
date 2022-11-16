@@ -8,7 +8,7 @@ class MailController extends UtilController {
 
     public send = async (req: Request, res: Response) => {
         let data = DataChecker.mergeObject(
-            DataChecker.needArrCheck(res, req.body, ["targetMail", "title", "contents"], [])
+            DataChecker.needArrCheck(res, req.body, ["targetMail", "title", "contents"])
         ) as {
             targetMail: string,
             title: string,
