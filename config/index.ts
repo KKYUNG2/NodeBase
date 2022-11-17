@@ -47,6 +47,10 @@ class Config {
         connectionLimit: string;
     }
 
+    SMS: {
+        URL: string;
+    }
+
     constructor() {
 
         // Global
@@ -73,8 +77,9 @@ class Config {
             connectionLimit: process.env.connectionLimit
         }
 
-
-
+        this.SMS = {
+            URL: process.env.SMS_URL
+        }
 
     }
 }

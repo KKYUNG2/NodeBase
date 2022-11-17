@@ -1,11 +1,11 @@
 import {Router} from "express";
 import Config from "../../../../config";
 import mail from './mail'
-import mailController from "../../controller/WAS/MailController";
-
+import pay from './pay'
 
 const router = Router();
 
 router.use('/mail', mail);
+router.use('/pay', pay);
 
 export default router;
