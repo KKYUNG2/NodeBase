@@ -38,6 +38,52 @@ class DataChecker extends UtilController {
     }
 
 
+    public numberArrCheck(res: any, objData: any, numberArr: string[], isRequire: boolean) {
+
+        let retObj = {};
+        let dataFailList = [];
+
+        for (let item of numberArr) {
+
+
+            if (objData[item]) {
+                dataFailList.push(item)
+            }
+
+            // @ts-ignore
+            retObj[item] = parseInt(objData[item]);
+
+        }
+
+        if(dataFailList.length > 0){
+            return this.dataCheck(res, dataFailList, ' Is Essential Data');
+        }
+
+
+        return retObj;
+    }
+
+    public stringArrCheck(res: any, objData: any, numberArr: string[], isRequire: boolean) {
+
+        let retObj = {};
+        let dataFailList = [];
+
+        for (let item of numberArr) {
+
+
+            if (objData[item]) {
+                dataFailList.push(item)
+            }
+
+            // @ts-ignore
+            retObj[item] = objData[item];
+
+        }
+
+        return retObj;
+    }
+
+
     public mergeObject(...objList: any[]) {
         let obj = {};
 

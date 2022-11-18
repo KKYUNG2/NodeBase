@@ -30,8 +30,6 @@ export default class MailService extends UtilController {
                 text: contents // 메일 내용
             };
 
-
-            // 메일 발송 해야됨 11월 14일
             // 메일 발송
             let result = await transporter.sendMail(mailOptions);
 

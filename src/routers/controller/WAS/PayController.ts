@@ -23,9 +23,7 @@ class PayController extends UtilController {
         // sms 결제 준비
         let result = await PayService.smsPay(res, data.ordNm, data.ordHpNo, data.mid, data.usrId, data.sid, data.goodsNm, data.goodsAmt);
 
-        console.log(result.data.header.resCode); // 처리 필요
-        console.log(result.data.header); // 처리 필요함
-        console.log(result.data.body); // 처리 필요함
+        // result 결제 준비 처리 필요함
 
         if(result)
             return this.true(res, 'SC1');
