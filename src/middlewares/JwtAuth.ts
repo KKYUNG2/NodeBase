@@ -45,10 +45,12 @@ export function validCheck(req: Request, res: Response, next: NextFunction) {
         return res.status(401).send({result: false, code: "401"});
 
     token = token.slice(7, token.length);
+
     let jwtPayload;
 
     try {
         jwtPayload = new JwtModel(<JwtModel>jwt.verify(token, Config.JWT.SECRET));
+        console.log(jwtPayload);
         res.locals.jwtPayload = jwtPayload;
 
     } catch (err) {

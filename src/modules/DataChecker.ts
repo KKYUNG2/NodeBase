@@ -5,14 +5,15 @@ import UtilController from "../routers/controller/UtilController";
 
 class DataChecker extends UtilController {
 
+
+    // 토큰 꺼내기
     public loadJWTValue(objData: any) {
         return {
-            userId: objData.userId,
-            sessionId: objData.sessionId,
-            userType: objData.userType
+            userId: objData.userId
         }
     }
 
+    // 필수 값 꺼내기
     public needArrCheck(res: any, objData: any, needArr: string[]) {
 
         let retObj = {};
