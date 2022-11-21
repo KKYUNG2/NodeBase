@@ -8,7 +8,7 @@ const transporter = nodeMailer.createTransport({
     port: 587,
     host: 'smtp.naver.com',
     secure: false,
-    requireTLS: true ,
+    requireTLS: true,
     auth: {
         user: Config.SMTP.user_email,  // 보내는 메일의 주소
         pass: Config.SMTP.user_passwd   // 보내는 메일의 비밀번호
@@ -33,7 +33,15 @@ export default class MailService extends UtilController {
             // 메일 발송
             let result = await transporter.sendMail(mailOptions);
 
-            return result;
+            if(!result)
+                return null;
+
+            let resultObj = {
+                accepted: result.accepted,
+                rejected: result.rejected
+            }
+
+            return resultObj;
 
         } catch (err) {
             return null;

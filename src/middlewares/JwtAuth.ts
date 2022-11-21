@@ -21,7 +21,7 @@ export class JwtModel {
 
     public deliverReqData(req: Request) {
         req.body.userId = this.u;
-        req.body.time = this.t;
+        req.body.userType = this.t;
         return;
     }
 
@@ -50,7 +50,6 @@ export function validCheck(req: Request, res: Response, next: NextFunction) {
 
     try {
         jwtPayload = new JwtModel(<JwtModel>jwt.verify(token, Config.JWT.SECRET));
-        console.log(jwtPayload);
         res.locals.jwtPayload = jwtPayload;
 
     } catch (err) {

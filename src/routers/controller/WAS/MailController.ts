@@ -8,6 +8,7 @@ class MailController extends UtilController {
 
     public send = async (req: Request, res: Response) => {
         let data = DataChecker.mergeObject(
+            DataChecker.loadJWTUserCheck(res, req.body),
             DataChecker.needArrCheck(res, req.body, ["targetMail", "title", "contents"])
         ) as {
             targetMail: string,
@@ -17,8 +18,11 @@ class MailController extends UtilController {
 
         let result = await MailService.send(res, data.targetMail, data.title, data.contents);
 
-        if(result.response.substr(0,3) === '250')
-            return this.true(res, 'MS0');
+        if(result)
+            return this.true(res, 'MS0', {
+                accepted: result.accepted,
+                rejected: result.rejected
+            });
         else
             return this.false(res, 'MF0')
 

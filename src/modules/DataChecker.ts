@@ -9,11 +9,28 @@ class DataChecker extends UtilController {
     // 토큰 꺼내기
     public loadJWTValue(objData: any) {
         return {
-            userId: objData.userId
+            userId: objData.userId,
+            userType: objData.userType
         }
     }
 
-    // 필수 값 꺼내기
+    // 토큰 관리자 검증하기
+    public loadJWTAdminCheck(res: any, objData: any) {
+
+        if(objData.userType !== 'ADMIN')
+            return this.false(res, 'A01')
+    }
+
+
+    // 토큰 사용자 검증하기
+    public loadJWTUserCheck(res: any, objData: any) {
+
+        if(objData.userType === 'ADMIN' || objData.userType === 'USER')
+            return this.false(res, 'U01')
+    }
+
+
+    // 필수 값 검증
     public needArrCheck(res: any, objData: any, needArr: string[]) {
 
         let retObj = {};
