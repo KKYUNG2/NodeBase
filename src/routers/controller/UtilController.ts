@@ -49,6 +49,18 @@ export default class UtilController {
 
     }
 
+    public message<T>(res: express.Response, message: string) {
+
+        let dto = {
+            result: false,
+            message: message
+        };
+
+
+        res.type('application/json');
+        return res.status(200).json(dto);
+
+    }
 
     public dataCheck<T>(res: express.Response, data: any, msg: string) {
 

@@ -34,7 +34,7 @@ export function createToken(input: JwtModel) {
 
 }
 
-export function validCheck(req: Request, res: Response, next: NextFunction) {
+export function jwtAuthCheck(req: Request, res: Response, next: NextFunction) {
 
     let token = <string>req.headers["authorization"];
 

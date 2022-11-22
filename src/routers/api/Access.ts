@@ -5,6 +5,10 @@ import AccessController from "../controller/AccessController";
 
 let router = Router();
 
+// 유저 로그인
 router.post("/user", AccessController.access)
+
+// 관리자 로그인
+router.post("/admin", AccessController.adminAccess)
 
 export default router;

@@ -1,10 +1,10 @@
 import express from "express";
 
 import pay from './pay';
-import {validCheck} from "../../../../middlewares/JwtAuth";
+import {jwtAuthCheck} from "../../../../middlewares/JwtAuth";
 
 let router = express.Router();
 
-router.use('/', [validCheck], pay);
+router.use('/', [jwtAuthCheck], pay);
 
 export default router;

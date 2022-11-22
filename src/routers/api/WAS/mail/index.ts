@@ -1,10 +1,10 @@
 import express from "express";
 
 import mail from './mail';
-import {validCheck} from "../../../../middlewares/JwtAuth";
+import {jwtAuthCheck} from "../../../../middlewares/JwtAuth";
 
 let router = express.Router();
 
-router.use('/', [validCheck], mail);
+router.use('/', [jwtAuthCheck], mail);
 
 export default router;
