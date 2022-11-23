@@ -1,12 +1,21 @@
 import express from "express";
-import MailController from "../../../routers/controller/DFS/FileController";
+import FileController from "../../../routers/controller/DFS/FileController";
 import {jwtAuthCheck} from "../../../middlewares/JwtAuth";
 
 let router = express.Router();
 
 // 이미지 업로드
-router.post("/img/upload",[jwtAuthCheck], MailController.imageUpload);
+router.post("/img/upload",[jwtAuthCheck], FileController.imageUpload);
+// 파일 업로드
+router.post("/file/upload",[jwtAuthCheck], FileController.fileUpload);
 
 // 파일 다운로드
-router.get("/download", [jwtAuthCheck], MailController.download);
+router.get("/download", [jwtAuthCheck], FileController.download);
+
+// 파일 삭제하기
+router.post("/file/delete",[jwtAuthCheck], FileController.fileDelete);
+
+// 파일 사이즈 확인하기
+router.post("/size", [jwtAuthCheck], FileController.sizeCheck);
+
 export default router;

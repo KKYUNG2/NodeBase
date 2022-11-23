@@ -25,6 +25,7 @@ class Config {
     RESPONSE_ERROR_PARAMETER: boolean;
     DEFAULT_TEMP_FILE_PATH: string;
     OS_TYPE: string;
+    FILE_SIZE: number;
 
     //JWT
     JWT: {
@@ -50,6 +51,13 @@ class Config {
     SMS: {
         URL: string;
     }
+    LOG: {
+        LOG_PATH: string;
+        LEVEL: string;
+        FILE_SIZE: string;
+        FILE_CNT: string;
+    }
+
 
     constructor() {
 
@@ -57,6 +65,7 @@ class Config {
         this.PORT = parseInt(process.env.PORT, 10);
         this.SERVER_TYPE = process.env.SERVER_TYPE
         this.DEFAULT_TEMP_FILE_PATH = process.env.DEFAULT_TEMP_FILE_PATH
+        this.FILE_SIZE = parseInt(process.env.FILE_SIZE);
 
         this.JWT = {
             SECRET: process.env.JWT_SECRET,
@@ -79,6 +88,13 @@ class Config {
 
         this.SMS = {
             URL: process.env.SMS_URL
+        }
+
+        this.LOG = {
+            LOG_PATH: process.env.LOG_PATH,
+            LEVEL: process.env.LEVEL,
+            FILE_SIZE: process.env.FILE_SIZE,
+            FILE_CNT: process.env.FILE_CNT
         }
 
     }

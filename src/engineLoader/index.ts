@@ -6,18 +6,18 @@ import Config from "../../config";
 
 import ExpressLoader from './Express';
 import MariaDBLoader from '../engineLoader/MariaDB'
-
+import Logger from '../modules/Logger'
 
 export default async () => {
 
     if (["WAS", "DFS"].indexOf(Config.SERVER_TYPE) >= 0) {
         await ExpressLoader();
-        console.log("Express Initialized");
+        Logger.info("Express Initialized");
     }
 
     if (["WAS", "DFS"].indexOf(Config.SERVER_TYPE) >= 0) {
         await MariaDBLoader();
-        console.log("MariaDB Initialized");
+        Logger.info("MariaDB Initialized");
     }
 
 
