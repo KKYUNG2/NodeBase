@@ -3,6 +3,7 @@
  */
 
 import express from "express";
+import Logger from "../../modules/Logger";
 
 
 function BasicResponse(result: boolean, code: string) {
@@ -83,7 +84,6 @@ export default class UtilController {
             code: code,
             msg: 'Error Occurred By ' + err
         };
-
 
         res.type('application/json');
         return res.status(200).json(dto);

@@ -3,6 +3,7 @@ import UtilController from '../UtilController';
 import DataChecker from "../../../modules/DataChecker";
 import Config from "../../../../config";
 import PayController from "../WAS/PayController";
+import Logger from "../../../modules/Logger";
 
 const fs = require('fs');
 const path = require('path');
@@ -11,29 +12,30 @@ const Date = moment().format('YYYYMMDD');
 const multer = require('multer');
 const gm = require('gm')
 
+const dir = Config.DEFAULT_TEMP_FILE_PATH + "/" + Date;
 
 
+//todo 전체적인 DB 연동 필요함
 class FileController extends UtilController {
 
     public imageUpload = async (req: Request, res: Response) => {
+        Logger.info("Call API - " + req.originalUrl);
 
         try {
 
-            console.log(req.body.file.size);
+            if (req.body.file.size > Config.FILE_SIZE)
+                return this.message(res, 'File size over!! Check your file Size')
 
-            // 파일 사이즈 제한 필요함
 
-            let fileData = req.body.file.originalFilename;
-            fileData = fileData.slice(fileData.lastIndexOf(".") + 1)
 
-            if(fileData !== 'jpeg' &&
+            let fileData = req.body.file.originalFilename.slice(req.body.file.originalFilename.lastIndexOf(".") + 1);
+
+            if (fileData !== 'jpeg' &&
                 fileData !== 'jpg' &&
-                fileData !== 'png'){
+                fileData !== 'png') {
                 return this.message(res, '권장 파일이 아닙니다.');
             }
 
-
-            let dir = Config.DEFAULT_TEMP_FILE_PATH + "/" + Date;
 
             if (!fs.existsSync(dir)) {
                 fs.mkdirSync(dir);
@@ -53,11 +55,10 @@ class FileController extends UtilController {
             gm(Config.DEFAULT_TEMP_FILE_PATH + "/" + Date + "/" + req.body.file.originalFilename)
                 .resize(300, 300)
                 .write(thumbImage + '_thumb' + thumbExtension, (err: string) => {
-                    if (err){
+                    if (err) {
                         fs.unlinkSync(originFileName)
                         return this.message(res, 'Thumb Image Make Fail')
-                    }
-                    else
+                    } else
                         console.log('Thumb Image Make');
                 });
 
@@ -67,17 +68,68 @@ class FileController extends UtilController {
             return this.err(res, 'UF2', err)
         }
 
+    }
+
+    public fileUpload = async (req: Request, res: Response) => {
+        Logger.info("Call API - " + req.originalUrl);
+
+        try {
+
+            if (req.body.file.size > Config.FILE_SIZE)
+                return this.message(res, 'File size over!! Check your file Size')
+
+
+            let fileData = req.body.file.originalFilename.slice(req.body.file.originalFilename.lastIndexOf(".") + 1);
+
+            if (fileData === 'exe')
+                return this.message(res, '권장 파일이 아닙니다.');
+
+
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir);
+            }
+
+            // 파일 업로드
+            if (!fs.existsSync(Config.DEFAULT_TEMP_FILE_PATH + "/" + Date + "/" + req.body.file.originalFilename)) {
+                fs.renameSync(req.body.file.path, dir + "/" + req.body.file.originalFilename);
+            }
+
+            return this.true(res, 'F01');
+
+        } catch (err) {
+            return this.err(res, 'UF2', err)
+        }
 
     }
 
+    public sizeCheck = async (req: Request, res: Response) => {
+        Logger.info("Call API - " + req.originalUrl);
+
+        try {
+
+            // DB 연동 필요
+            let filePath: any = req.body.file;
+
+            if(!filePath)
+                return this.message(res, 'Check Your File')
+
+            return this.true(res, 'SZ0', {size: req.body.file.size});
+
+        } catch (err) {
+            return this.err(res, 'DF1', err)
+        }
+
+    }
 
     public download = async (req: Request, res: Response) => {
 
         try {
 
             // DB 연동 필요
-
             let filePath: any = req.query.filePath;
+
+            if(!filePath)
+                return this.message(res, 'Check Your FilePath')
 
             res.download(filePath, 'downlaod')
 
@@ -86,6 +138,24 @@ class FileController extends UtilController {
             return this.err(res, 'DF1', err)
         }
 
+    }
+
+    public fileDelete = async (req: Request, res: Response) => {
+
+        try {
+
+            // DB 연동 필요
+            let filePath: any = req.query.filePath;
+
+            if(!filePath)
+                return this.message(res, 'Check Your FilePath')
+
+            res.download(filePath, 'downlaod')
+
+
+        } catch (err) {
+            return this.err(res, 'DF1', err)
+        }
 
     }
 
