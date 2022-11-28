@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import UtilController from '../UtilController';
 
-import PayService from "../../services/pay/payService"
+import PayService from "../../services/pay/PayService"
 import DataChecker from "../../../modules/DataChecker";
 
 class PayController extends UtilController {

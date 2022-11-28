@@ -1,7 +1,6 @@
 import {json, Request, Response} from "express";
 import UtilController from '../UtilController';
-
-import MailService from '../../services/mail/mailService'
+import MailService from '../../services/mail/MailService'
 import DataChecker from "../../../modules/DataChecker";
 
 class MailController extends UtilController {

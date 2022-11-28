@@ -24,8 +24,7 @@ class DataChecker extends UtilController {
 
     // 토큰 사용자 검증하기
     public loadJWTUserCheck(res: any, objData: any) {
-
-        if(objData.userType === 'ADMIN' || objData.userType === 'USER')
+        if(objData.userType !== 'USER' && objData.userType !== 'ADMIN')
             return this.false(res, 'U01')
     }
 
@@ -74,11 +73,11 @@ class DataChecker extends UtilController {
         return retObj;
     }
 
-    public stringArrCheck(res: any, objData: any, numberArr: string[], isRequire: boolean) {
+    public stringArrCheck(res: any, objData: any, strArr: string[], isRequire: boolean) {
 
         let retObj = {};
 
-        for (let item of numberArr) {
+        for (let item of strArr) {
 
             if ((item == '' || item == undefined) && isRequire === true) {
                 return this.dataCheck(res, item, '  Is Essential Data')
