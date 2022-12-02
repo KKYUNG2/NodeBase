@@ -9,6 +9,7 @@ const CryptoJS = require('crypto-js');
 
 export default class PayService extends UtilController {
 
+    // todo DB 추가해야함
     public static async smsPay(res: any, ordNm: string, ordHpNo: string, mid: string,
         usrId: string, sid: string, goodsNm: string, goodsAmt: number) {
 

@@ -3,8 +3,7 @@
  */
 
 import mariadb from "mariadb";
-
-import MariaDBLoader from "../engineLoader/MariaDB";
+import Logger from '../modules/Logger'
 
 class MariaDB {
 
@@ -21,7 +20,6 @@ class MariaDB {
     async getConnection() {
         try {
 
-            await MariaDBLoader();
             return await this.cluster.getConnection();
 
         } catch (err) {
@@ -45,6 +43,7 @@ class MariaDB {
             };
 
         } catch (err) {
+            Logger.debug('Query Insert Fail', err);
             await conn.release();
             return null;
 
@@ -61,11 +60,10 @@ class MariaDB {
             await conn.commit();
             await conn.release();
 
-            return {
-                affectedRows: result.affectedRows
-            };
+            return result[0];
 
         } catch (err) {
+            Logger.debug('Query Select Fail', err);
             await conn.release();
             return null;
 
@@ -73,7 +71,35 @@ class MariaDB {
 
     }
 
-    async get(statement: string) {
+
+    async get(statement: string[]) {
+        let conn = await this.getConnection();
+
+        try {
+            await conn.beginTransaction();
+
+            let query = statement.join(" ; ");
+            let result = await conn.query(query);
+
+            if (result.length !== statement.length) {
+                throw new Error("Miss match query count! - Injection attack warning");
+            }
+
+            Logger.debug("Query result - " + (!!result));
+            Logger.debug(query);
+
+            await conn.commit();
+            await conn.release();
+
+            return result;
+
+        } catch (err) {
+            await conn.rollback();
+            Logger.debug('Query Execute Fail', err);
+        }
+    }
+
+    async Execute(statement: string) {
         let conn = await this.getConnection();
 
         try {
@@ -83,7 +109,8 @@ class MariaDB {
             await conn.release();
 
             return {
-                affectedRows: result.affectedRows
+                affectedRows: result.affectedRows,
+                insertId: result.insertId
             };
 
         } catch (err) {
