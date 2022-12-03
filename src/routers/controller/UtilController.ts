@@ -90,4 +90,16 @@ export default class UtilController {
 
     }
 
+    public UtilFalse<T>(message: string) {
+
+        let dto = {
+            result: false,
+            message: message
+        };
+
+        return dto;
+
+    }
+
+
 }

@@ -7,6 +7,7 @@ import cors from 'cors';
 import morgan from 'morgan';
 import router from "../routers";
 
+
 const app = express();
 const cookieParser = require('cookie-parser');
 
@@ -20,10 +21,14 @@ export default async () => {
     app.use(express.urlencoded({limit: '50mb'}));
     app.use(cookieParser());
 
+
+
     app.get('/', (req, res) => res.status(200).end());
     app.head('/', (req, res) => res.status(200).end());
 
     app.enable('trust proxy');
+
+
 
     // 리퀘스트 처리 모듈 추가.
     app.use(formData.parse({
@@ -49,7 +54,13 @@ export default async () => {
     app.set('view engine', 'ejs');
     app.engine('html', ejs.renderFile);
 
-    app.use(morgan("combined", {stream: {write: (msg) => console.log(msg)}}));
+
+    // 로그 기준 필요함
+    if (process.env.NODE_ENV === 'production') {
+        app.use(morgan('combined')); // 배포
+    } else {
+        app.use(morgan('dev')); // 개발
+    }
 
     app.disable("x-powered-by");
 
