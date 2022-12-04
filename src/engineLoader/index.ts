@@ -6,6 +6,7 @@ import Config from "../../config";
 
 import ExpressLoader from './Express';
 import MariaDBLoader from '../engineLoader/MariaDB'
+import MQTTLoader from '../engineLoader/MqttBroker'
 import Logger from '../modules/Logger'
 
 export default async () => {
@@ -18,6 +19,11 @@ export default async () => {
     if (["WAS", "DFS"].indexOf(Config.SERVER_TYPE) >= 0) {
         await MariaDBLoader();
         Logger.info("MariaDB Initialized");
+    }
+
+    if (["MQTT"].indexOf(Config.SERVER_TYPE) >= 0) {
+        await MQTTLoader();
+        Logger.info("MQTT Initialized");
     }
 
 
