@@ -3,7 +3,9 @@ import Config from "../../../../config"
 import {createToken, JwtModel} from "../../../middlewares/JwtAuth";
 import MariaDB from "../../../modules/MariaDB";
 import QM from "../../../modules/QueryMaker";
-import * as Crypto from "crypto";
+import MailService from "../mail/MailService";
+
+const moment = require('moment');
 
 
 const crypto = require("crypto");
@@ -22,7 +24,7 @@ export default class UserService extends UtilController {
             }, ["*"]))
 
             if(loginData)
-                return 'ALE';
+                return 'LA';
 
             await MariaDB.get([
                 QM.Insert("t_node_user",{
@@ -34,7 +36,8 @@ export default class UserService extends UtilController {
                     gender: gender,
                     address: address,
                     address_detail: addressDetail,
-                    zip_code: zipCode
+                    zip_code: zipCode,
+                    status: 50
                 }),
                 QM.Insert("t_node_login",{
                     user_id: userId,
@@ -54,12 +57,9 @@ export default class UserService extends UtilController {
     }
 
 
-
     public static async Access(res: any, loginId: string, pwd: string) {
 
         try {
-
-            let message;
 
             let loginData = await MariaDB.getOne(QM.Select("t_node_login",{
                 login_id: loginId
@@ -82,7 +82,6 @@ export default class UserService extends UtilController {
             const token = createToken(new JwtModel(({u: loginData.user_id, t: loginData.user_type} as JwtModel)));
 
             return {
-                result: false,
                 token: token,
                 loginData: loginData,
                 message: 'Login Success'
@@ -93,6 +92,85 @@ export default class UserService extends UtilController {
         }
     }
 
+
+    public static async getUserData(loginId: string) {
+
+        try {
+
+            let loginData = await MariaDB.getOne(QM.Select("t_node_user",{
+                login_id: loginId
+            }, ["*"]));
+
+            if(!loginData && !loginData.email)
+                return false;
+
+
+            let pwd = moment().format('YYYYMMDD') + loginData.user_id + moment(loginData.reg_date).format('DDD');
+            let newPwd: string = "";
+
+            for (let i = 0; i < 6; i++) {
+                const rnum = Math.floor(Math.random() * pwd.length);
+                newPwd += pwd.substring(rnum, rnum + 1)
+            }
+
+
+            let result = await MariaDB.query(QM.Update("t_node_login",{
+                pwd: crypto.createHash('sha512').update(newPwd).digest('hex')
+            }, {user_id: loginData.user_id}));
+
+            if(!result)
+                return false;
+
+            let mailSendResult =  await MailService.send(loginData.email, '비밀번호 찾기입니다.', '회원님의 비밀번호는 ' + newPwd + '입니다.');
+
+            return mailSendResult;
+
+        } catch (err) {
+            return err;
+        }
+    }
+
+    public static async updatePwd(loginId: string, newPwd: string) {
+
+        try {
+
+
+            let result = await MariaDB.query(QM.Update("t_node_login",{
+                pwd: crypto.createHash('sha512').update(newPwd).digest('hex')
+            }, {
+                login_id: loginId
+            }))
+
+            return result;
+
+
+        } catch (err) {
+            return err;
+        }
+    }
+
+
+    public static async updateUser(loginId: string, email: string, phoneNumber: string, address: string, addressDetail: string, zipCode: string) {
+
+        try {
+
+            let result = await MariaDB.query(QM.Update("t_node_user",{
+                email: email,
+                phone_number: phoneNumber,
+                address: address,
+                address_detail: addressDetail,
+                zip_code: zipCode
+            }, {
+                login_id: loginId
+            }))
+
+            return result;
+
+
+        } catch (err) {
+            return err;
+        }
+    }
 
 }
 
