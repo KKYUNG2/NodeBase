@@ -19,7 +19,7 @@ const transporter = nodeMailer.createTransport({
 export default class MailService extends UtilController {
 
 
-    public static async send(res: any, targetMail: string, title: string, contents: string) {
+    public static async send(targetMail: string, title: string, contents: string) {
         try {
 
             // 메일 옵션

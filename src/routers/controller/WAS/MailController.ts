@@ -15,7 +15,7 @@ class MailController extends UtilController {
             contents: string
         };
 
-        let result = await MailService.send(res, data.targetMail, data.title, data.contents);
+        let result = await MailService.send(data.targetMail, data.title, data.contents);
 
         if(result)
             return this.true(res, 'MS0', {
