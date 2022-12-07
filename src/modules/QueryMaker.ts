@@ -3,10 +3,11 @@
  */
 
 import Logger from '../modules/Logger'
+import UtilController from "../routers/controller/UtilController";
 
 const escape = require('sqlstring').escape;
 
-class QueryMaker {
+class QueryMaker extends UtilController{
 
     Insert = (tblName: string, insertObj: any) => {
 

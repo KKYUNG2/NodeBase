@@ -200,9 +200,7 @@ class FileController extends UtilController {
                 // 원본 파일 삭제하기
                 fs.unlinkSync(fileData.file_path + fileData.file_name);
 
-                let result = await MariaDB.query(QM.Delete("t_node_file",{
-                    file_seq: data.fileSeq
-                }))
+                let result = await MariaDB.query(QM.Delete("t_node_file",{file_seq: data.fileSeq}))
 
                 if(result)
                     return this.true(res, 'FDS0')
