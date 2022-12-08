@@ -6,6 +6,31 @@ import DataChecker from "../../../modules/DataChecker";
 
 class PayController extends UtilController {
 
+
+
+    // 결제 데이터 저장
+    public ready = async (req: Request, res: Response) => {
+        let data = DataChecker.mergeObject(
+            DataChecker.needArrCheck(res, req.body, ['phone', 'name'])
+        ) as {
+            phone: string,
+            name: string
+        };
+    }
+
+
+    // 결제 취소
+    public cancel = async (req: Request, res: Response) => {
+        let data = DataChecker.mergeObject(
+            DataChecker.needArrCheck(res, req.body, ['paySeq'])
+        ) as {
+            paySeq: string
+        };
+
+
+    }
+
+    // 문자 결제
     public sms = async (req: Request, res: Response) => {
         let data = DataChecker.mergeObject(
             DataChecker.needArrCheck(res, req.body, [
@@ -20,6 +45,7 @@ class PayController extends UtilController {
             goodsAmt: number
         };
 
+
         // sms 결제 준비
         let result = await PayService.smsPay(res, data.ordNm, data.ordHpNo, data.mid, data.usrId, data.sid, data.goodsNm, data.goodsAmt);
 
@@ -32,6 +58,8 @@ class PayController extends UtilController {
 
     }
 
+
+    // 문자 결제 내역 조회
     public smsResult = async (req: Request, res: Response) => {
         let data = DataChecker.mergeObject(
             DataChecker.needArrCheck(res, req.body, ['mid', 'usrId', 'sid', 'reqId'])
@@ -49,6 +77,17 @@ class PayController extends UtilController {
             return this.true(res, 'S01', {result: result});
         else
             return this.false(res, 'S01')
+
+    }
+
+    // 문자 결제 내역 조회
+    public list = async (req: Request, res: Response) => {
+        let data = DataChecker.mergeObject(
+            DataChecker.needArrCheck(res, req.body, ['mid'])
+        ) as {
+            reqId: string
+        };
+
 
     }
 

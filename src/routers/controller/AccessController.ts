@@ -155,6 +155,30 @@ class AccessController extends UtilController {
 
     }
 
+    public userBlack = async (req: Request, res: Response) => {
+        Logger.info("Call API - " + req.originalUrl);
+
+        let data = DataChecker.mergeObject(
+            DataChecker.loadJWTValue(req.body),
+            DataChecker.loadJWTAdminCheck(res, req.body)
+        ) as {
+            userId: string,
+        };
+
+    }
+
+    public warn = async (req: Request, res: Response) => {
+        Logger.info("Call API - " + req.originalUrl);
+
+        let data = DataChecker.mergeObject(
+            DataChecker.loadJWTValue(req.body),
+            DataChecker.loadJWTAdminCheck(res, req.body)
+        ) as {
+            userId: string,
+        };
+
+    }
+
 
 }
 

@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import UtilController from '../UtilController';
 import DataChecker from "../../../modules/DataChecker";
 import Config from "../../../../config";
-import PayController from "../WAS/PayController";
+import PayController from "../Pay/PayController";
 import Logger from "../../../modules/Logger";
 import MariaDB from '../../../modules/MariaDB'
 import QM from '../../../modules/QueryMaker'
