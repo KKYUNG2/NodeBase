@@ -1,5 +1,5 @@
 import express from "express";
-import FileController from "../../../routers/controller/DFS/FileController";
+import FileController from "../../controller/File/FileController";
 import {jwtAuthCheck} from "../../../middlewares/JwtAuth";
 
 let router = express.Router();

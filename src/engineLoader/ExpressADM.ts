@@ -46,7 +46,17 @@ export default async () => {
     }));
 
 
-    // todo 로그 기준 필요함
+    // web
+    // public 경로 추가
+    app.use(express.static(process.env.ROOT_PATH + "/public"));
+
+    // 웹 엔진 로드
+    app.set('views', process.env.ROOT_PATH + (Config.OS_TYPE === "win32" ? "\\" : "/") + 'views');
+    app.set('view engine', 'ejs');
+    app.engine('html', ejs.renderFile);
+
+
+    // 로그 기준 필요함
     if (process.env.NODE_ENV === 'production') {
         app.use(morgan('combined')); // 배포
     } else {
@@ -57,6 +67,7 @@ export default async () => {
 
     app.use('/', router);
 
+    app.use(express.static('views'));
 
     //app.use(ErrorHandler);
 

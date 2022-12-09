@@ -25,7 +25,7 @@ class DataChecker extends UtilController {
     // 토큰 사용자 검증하기
     public loadJWTUserCheck(res: any, objData: any) {
         if(objData.userType !== 'USER' && objData.userType !== 'ADMIN')
-            return this.false(res, 'U01')
+            return this.false(res, 'U01');
     }
 
 

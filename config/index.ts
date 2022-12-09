@@ -22,7 +22,6 @@ class Config {
     // Global
     PORT: number;
     SERVER_TYPE: string;
-    RESPONSE_ERROR_PARAMETER: boolean;
     DEFAULT_TEMP_FILE_PATH: string;
     OS_TYPE: string;
     FILE_SIZE: number;
@@ -50,7 +49,9 @@ class Config {
 
     SMS: {
         URL: string;
+        MERCHANT_KEY: string;
     }
+
     LOG: {
         LOG_PATH: string;
         LEVEL: string;
@@ -87,7 +88,8 @@ class Config {
         }
 
         this.SMS = {
-            URL: process.env.SMS_URL
+            URL: process.env.URL,
+            MERCHANT_KEY: process.env.MERCHANT_KEY
         }
 
         this.LOG = {

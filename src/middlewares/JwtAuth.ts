@@ -2,7 +2,6 @@ import {Request, Response, NextFunction} from "express";
 import jwt from "jsonwebtoken";
 import Config from "../../config";
 
-const moment = require('moment');
 
 export class JwtModel {
 
@@ -38,13 +37,16 @@ export function jwtAuthCheck(req: Request, res: Response, next: NextFunction) {
 
     let token = <string>req.headers["authorization"];
 
+
+
     if (!token)
         return res.status(401).send({result: false, code: "401"});
 
     if (token.indexOf("Bearer ", 0) < 0)
-        return res.status(401).send({result: false, code: "401"});
+        return res.status(401).send({result: false, code: "401 Bearer"});
 
     token = token.slice(7, token.length);
+
 
     let jwtPayload;
 
@@ -64,39 +66,6 @@ export function jwtAuthCheck(req: Request, res: Response, next: NextFunction) {
     next();
 }
 
-export function createRefresh(input: JwtModel) {
-    return jwt.sign(input.getAll(), Config.JWT.SECRET + "240fgg480fhddko2epw", {
-        expiresIn: "7d"
-    });
 
-}
 
-export function validRefreshCheck(req: Request, res: Response, next: NextFunction) {
-
-    let token = <string>req.headers["authorization"];
-
-    if (!token)
-        return res.status(401).send({result: false, code: 401});
-
-    if (token.indexOf("Bearer ", 0) < 0)
-        return res.status(401).send({result: false, code: 401});
-
-    token = token.slice(7, token.length);
-    let jwtPayload;
-
-    try {
-        jwtPayload = new JwtModel(<JwtModel>jwt.verify(token, Config.JWT.SECRET + "240fgg480fhddko2epw"));
-        res.locals.jwtPayload = jwtPayload;
-
-    } catch (err) {
-        return  res.status(401).send({result: false, code: 401});
-
-    }
-
-    jwtPayload.deliverReqData(req);
-    let newToken = createToken(jwtPayload);
-    res.setHeader("token", newToken);
-
-    next();
-}
 
