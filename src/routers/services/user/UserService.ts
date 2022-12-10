@@ -5,6 +5,7 @@ import MariaDB from "../../../modules/MariaDB";
 import QM from "../../../modules/QueryMaker";
 import MailService from "../mail/MailService";
 
+const escape = require('mysql').escape;
 const moment = require('moment');
 
 
@@ -12,8 +13,8 @@ const crypto = require("crypto");
 
 export default class UserService extends UtilController {
 
-    public static async Join(res: any, loginId: string, pwd: string, userType: string, email: string, phoneNumber: string,
-                             gender: string, address: string, addressDetail: string, zipCode: string) {
+    public static async Join(res: any, loginId: string, pwd: string, userType: string, email: string, name: string, nickName: string,
+                             phoneNumber: string, gender: string, address: string, addressDetail: string, zipCode: string) {
 
         try {
 
@@ -26,13 +27,15 @@ export default class UserService extends UtilController {
             if(loginData)
                 return 'LA';
 
-            await MariaDB.get([
+            let result = await MariaDB.get([
                 QM.Insert("t_node_user",{
                     user_id: userId,
                     login_id: loginId,
                     user_type: userType,
                     email: email,
-                    phone_number: phoneNumber,
+                    name: '\\(HEX(AES_ENCRYPT(' + escape(name) + ', ' + escape(userId) + ')))',
+                    nick_name: nickName,
+                    phone_number: '\\(HEX(AES_ENCRYPT(' + escape(phoneNumber) + ', ' + escape(userId) + ')))',
                     gender: gender,
                     address: address,
                     address_detail: addressDetail,
@@ -47,9 +50,13 @@ export default class UserService extends UtilController {
                 })
             ])
 
-            const token = createToken(new JwtModel(({u: userId, t: userType} as JwtModel)));
+            if(result){
+                const token = createToken(new JwtModel(({u: userId, t: userType} as JwtModel)));
+                return token;
+            } else {
+                return null;
+            }
 
-            return token;
 
         } catch (err) {
             return err;
@@ -61,6 +68,14 @@ export default class UserService extends UtilController {
 
         try {
 
+
+            let userData = await MariaDB.getOne(QM.Select("t_node_user",{
+                login_id: loginId
+            }, ["*"]));
+
+            if(!userData)
+                return null;
+
             let loginData = await MariaDB.getOne(QM.Select("t_node_login",{
                 login_id: loginId
             }, ["*"]));
@@ -71,7 +86,6 @@ export default class UserService extends UtilController {
                     message: 'Not Exist Login Data'
                 };
 
-
             if(crypto.createHash('sha512').update(pwd).digest('hex') !== loginData.pwd)
                 return {
                     result: false,
@@ -79,7 +93,7 @@ export default class UserService extends UtilController {
                 };
 
 
-            const token = createToken(new JwtModel(({u: loginData.user_id, t: loginData.user_type} as JwtModel)));
+            const token = createToken(new JwtModel(({u: userData.user_id, t: userData.user_type} as JwtModel)));
 
             return {
                 token: token,

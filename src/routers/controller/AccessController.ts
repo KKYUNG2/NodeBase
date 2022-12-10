@@ -14,10 +14,10 @@ class AccessController extends UtilController {
 
         let data = DataChecker.mergeObject(
             DataChecker.needArrCheck(res, req.body, [
-                "loginId", "pwd", "userType", "email", "phoneNumber", "gender"
+                "loginId", "pwd", "userType", "email", "phoneNumber", "gender", "name"
             ]),
             DataChecker.stringArrCheck(res, req.body, [
-                "address", "addressDetail", "zipCode"
+                "address", "addressDetail", "zipCode", "nickName"
             ], false)
         ) as {
             loginId: string,
@@ -28,14 +28,17 @@ class AccessController extends UtilController {
             gender: string,
             address: string,
             addressDetail: string,
-            zipCode: string
+            zipCode: string,
+            name: string,
+            nickName: string
         };
 
-        let result = await UserService.Join(res, data.loginId, data.pwd, data.userType, data.email, data.phoneNumber, data.gender
+        let result = await UserService.Join(res, data.loginId, data.pwd, data.userType, data.email, data.name, data.nickName, data.phoneNumber, data.gender
             , data.address, data.addressDetail, data.zipCode)
 
-        if(result)
-            return this.true(res,'JS0', {result: result})
+        if(result){
+            return this.true(res,'JS0', {token: result})
+        }
         else
             return this.false(res, 'LA')
 
@@ -160,10 +163,14 @@ class AccessController extends UtilController {
 
         let data = DataChecker.mergeObject(
             DataChecker.loadJWTValue(req.body),
-            DataChecker.loadJWTAdminCheck(res, req.body)
+            DataChecker.loadJWTAdminCheck(res, req.body),
+            DataChecker.needArrCheck(res, req.body, ["targetUserId", "status"])
         ) as {
             userId: string,
         };
+
+
+
 
     }
 
@@ -176,6 +183,8 @@ class AccessController extends UtilController {
         ) as {
             userId: string,
         };
+
+
 
     }
 
