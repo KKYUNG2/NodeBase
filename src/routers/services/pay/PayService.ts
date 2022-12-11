@@ -1,13 +1,50 @@
 import UtilController from "../../controller/UtilController";
 import Config from "../../../../config"
+import MariaDB from "../../../modules/MariaDB";
+import QM from "../../../modules/QueryMaker";
 
 const Axios = require('axios');
 const moment = require('moment');
 const CryptoJS = require('crypto-js');
 
+const smsDate = moment().format('YYYYMMDDHHMMss');
 
 
 export default class PayService extends UtilController {
+
+
+    // todo DB 추가해야함
+    public static async ready(userId: string) {
+
+        try {
+
+
+            let userData = await MariaDB.getOne(QM.Select("t_node_user",{
+                user_id: userId
+            }, ["*"]));
+
+
+            if(!userData)
+                return null;
+
+            let result = await MariaDB.Execute(QM.Insert("t_node_pay",{
+                user_id: userData.user_id,
+                phone: userData.phone_number,
+                name: userData.name,
+                pay_status: 'READY',
+                order_status: 'READY'
+            }))
+
+            if(result)
+                return result
+            else
+                return null;
+
+
+        } catch (err) {
+            return err;
+        }
+    }
 
     // todo DB 추가해야함
     public static async smsPay(res: any, ordNm: string, ordHpNo: string, mid: string,
@@ -15,12 +52,12 @@ export default class PayService extends UtilController {
 
         try {
 
-            var signData = getSignData(sid + usrId + moment().format('YYYYMMDDHHMMss') + '33F49GnCMS1mFYlGXisbUDzVf2ATWCl9k3R++d5hDd3Frmuos/XLx8XhXpe+LDYAbpGKZYSwtlyyLOtS/8aD7A==').toString()
+            var signData = getSignData(sid + usrId + smsDate + Config.SMS.MERCHANT_KEY).toString()
 
             let result = await Axios.post(Config.SMS.URL, {
                 header: {
                     sid: sid, // 전문 ID, 업무별 정의된 ID 입력
-                    trDtm: moment().format('YYYYMMDDHHMMss'), // API 전송 일시 (YYYYmmddHHMMSS)
+                    trDtm: smsDate, // API 전송 일시 (YYYYmmddHHMMSS)
                     gubun: 'S' // 전문 구분 (요청 : 'S', 응답 : 'R')
                 },
                 body: {
@@ -51,12 +88,12 @@ export default class PayService extends UtilController {
 
         try {
 
-            var signData = getSignData(sid + usrId + moment().format('YYYYMMDDHHMMss') + '33F49GnCMS1mFYlGXisbUDzVf2ATWCl9k3R++d5hDd3Frmuos/XLx8XhXpe+LDYAbpGKZYSwtlyyLOtS/8aD7A==').toString()
+            var signData = getSignData(sid + usrId + smsDate + Config.SMS.MERCHANT_KEY).toString()
 
             let result = await Axios.post(Config.SMS.URL, {
                 header: {
                     sid: sid, // 전문 ID, 업무별 정의된 ID 입력
-                    trDtm: moment().format('YYYYMMDDHHMMss'), // API 전송 일시 (YYYYmmddHHMMSS)
+                    trDtm: smsDate, // API 전송 일시 (YYYYmmddHHMMSS)
                     gubun: 'S', // 전문 구분 (요청 : 'S', 응답 : 'R')
                     resCode: "",
                     resMsg: ""
@@ -86,7 +123,7 @@ export default class PayService extends UtilController {
 
 
 function getSignData(str: string) {
-    var encrypted = CryptoJS.SHA256(str);
+    const encrypted = CryptoJS.SHA256(str);
     return encrypted;
 }
 

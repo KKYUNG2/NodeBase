@@ -11,11 +11,18 @@ class PayController extends UtilController {
     // 결제 데이터 저장
     public ready = async (req: Request, res: Response) => {
         let data = DataChecker.mergeObject(
-            DataChecker.needArrCheck(res, req.body, ['phone', 'name'])
+            DataChecker.loadJWTValue(req.body),
+            DataChecker.loadJWTUserCheck(res, req.body)
         ) as {
-            phone: string,
-            name: string
+            userId: string,
         };
+
+        let result = await PayService.ready(data.userId);
+
+        if(result)
+            return this.true(res, 'PRS0', {paySeq: result.insertId})
+        else
+            return this.false(res, 'PRF0')
     }
 
 
