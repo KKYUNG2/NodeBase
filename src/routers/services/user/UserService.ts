@@ -186,5 +186,49 @@ export default class UserService extends UtilController {
         }
     }
 
+
+    public static async black(targetUserId: string, status: string) {
+
+        try {
+
+            let result = await MariaDB.query(QM.Update("t_node_user",{
+                status: status,
+            }, {
+                user_id: targetUserId
+            }))
+
+            return result;
+
+
+        } catch (err) {
+            return err;
+        }
+    }
+
+    public static async warn(targetUserId: string) {
+
+        try {
+
+            let result = await MariaDB.query(QM.Update("t_node_user",{
+                warn: '\\warn + 1',
+            }, {
+                user_id: targetUserId
+            }))
+
+            let userData = await MariaDB.getOne(QM.Select("t_node_user",{
+                user_id: targetUserId
+            },["*"]));
+
+            if(userData.warn === 5)
+                return userData;
+
+            return result;
+
+
+        } catch (err) {
+            return err;
+        }
+    }
+
 }
 

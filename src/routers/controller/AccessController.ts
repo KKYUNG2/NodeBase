@@ -167,9 +167,16 @@ class AccessController extends UtilController {
             DataChecker.needArrCheck(res, req.body, ["targetUserId", "status"])
         ) as {
             userId: string,
+            targetUserId: string,
+            status: string
         };
 
+        let result = await UserService.black(data.targetUserId, data.status);
 
+        if(result)
+            return this.true(res, 'UBS0')
+        else
+            return this.false(res, 'UBF0')
 
 
     }
@@ -179,12 +186,18 @@ class AccessController extends UtilController {
 
         let data = DataChecker.mergeObject(
             DataChecker.loadJWTValue(req.body),
-            DataChecker.loadJWTAdminCheck(res, req.body)
+            DataChecker.loadJWTAdminCheck(res, req.body),
+            DataChecker.needArrCheck(res, req.body, ["targetUserId"])
         ) as {
-            userId: string,
+            targetUserId: string,
         };
 
+        let result = await UserService.warn(data.targetUserId);
 
+        if(result)
+            return this.true(res, 'UWS0');
+        else
+            return this.false(res, 'UWF0')
 
     }
 
