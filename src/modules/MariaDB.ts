@@ -71,6 +71,29 @@ class MariaDB {
 
     }
 
+    async getAll(statement: string) {
+        let conn = await this.getConnection();
+
+        try {
+            await conn.beginTransaction();
+
+            let result = await conn.query(statement);
+
+
+            Logger.debug("Query result - " + (!!result));
+
+            await conn.commit();
+            await conn.release();
+
+            return result;
+
+        } catch (err) {
+            await conn.rollback();
+            await conn.release();
+            Logger.debug('Query Execute Fail', err);
+        }
+    }
+
 
     async get(statement: string[]) {
         let conn = await this.getConnection();
@@ -95,6 +118,7 @@ class MariaDB {
 
         } catch (err) {
             await conn.rollback();
+            await conn.release();
             Logger.debug('Query Execute Fail', err);
         }
     }
@@ -103,6 +127,7 @@ class MariaDB {
         let conn = await this.getConnection();
 
         try {
+
             let result = await conn.query(statement.trim());
 
             await conn.commit();
@@ -110,7 +135,72 @@ class MariaDB {
 
             return {
                 affectedRows: result.affectedRows,
+                insertId: parseInt(result.insertId)
+            };
+
+        } catch (err) {
+            await conn.rollback();
+            await conn.release();
+            return null;
+
+        }
+
+    }
+
+    // 커밋 안되도록 SQL 실행
+    async NotCommitExecute(statement: string) {
+        let conn = await this.getConnection();
+
+        try {
+            let result = await conn.query(statement.trim());
+
+            await conn.release();
+
+            return {
+                affectedRows: result.affectedRows,
                 insertId: result.insertId
+            };
+
+        } catch (err) {
+            await conn.rollback();
+            await conn.release();
+            return null;
+
+        }
+
+    }
+
+    // 커밋 호출
+    async SendCommit() {
+        let conn = await this.getConnection();
+
+        try {
+
+            await conn.commit();
+            await conn.release();
+
+            return conn;
+
+        } catch (err) {
+            await conn.release();
+            return null;
+
+        }
+
+    }
+
+    // 롤백 호출
+    async SendRollback(statement: string) {
+        let conn = await this.getConnection();
+
+        try {
+            let result = await conn.query(statement.trim());
+
+            await conn.rollback();
+            await conn.release();
+
+            return {
+                affectedRows: result.affectedRows
             };
 
         } catch (err) {
@@ -120,6 +210,8 @@ class MariaDB {
         }
 
     }
+
+
 
 }
 
